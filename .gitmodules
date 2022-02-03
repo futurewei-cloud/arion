@@ -1,0 +1,3 @@
+[submodule "src/extern/zeta"]
+	path = src/extern/zeta
+	url = https://github.com/futurewei-cloud/zeta
