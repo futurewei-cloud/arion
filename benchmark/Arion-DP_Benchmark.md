@@ -2,9 +2,9 @@
 
 ## Introduction
 
-This is the initial benchmark for Arion DP network performance. We mainly conducts the Throughput and Latency Benchmark and primarily focus on tests on single Wing performance. The numbers will be used for understanding current Arion DP behaviour and furthuer exploring performance improvement for single wing as well Ariond DP cluster.
+This is the initial benchmark for Arion DP network performance. We mainly conducts the Throughput and Latency Benchmark and primarily focus on tests on single Wing performance. The numbers will be used for understanding current Arion DP behaviour and furthuer exploring performance improvement for single wing as well as Ariond DP cluster.
 
-We used different tools to conduct various benchmark tests. The results shown below are mainly collected with netperf although we also used iperf3 for comparision. The throughput benchmark uses netperf's TCP_STREAM. TCP_RR and TCP_CRR are used to observe network latency.
+We used different tools to conduct various benchmark tests. The results shown below are mainly collected with netperf although we also used iperf3 for comparision. The throughput benchmark uses netperf's TCP_STREAM test. TCP_RR and TCP_CRR are used to observe network latency.
 
 The main comparision in benchmarking is between direct compute node communication vs communication via Arion Cluster between computer nodes.
 
@@ -29,21 +29,21 @@ These machines are connected via 10G switches.
 ## Test setup
 
 The tests shown here includes:
-  - Direct(Node <-> Node): In this setup, no Arion Cluster is envolved. The benchnark is performed by directly running *netperf* between docker containers in different bare metal machines with differnt MTUs:
+  - Direct(Node <-> Node): In this setup, no Arion Cluster is envolved. The benchmark is performed by directly running *netperf* between docker containers in different bare metal machines with differnt MTUs:
       * MTU 1500
 	  * MTU 9000
 
-  - Via Arion Cluster(Node <-> Wing <-> Node): In this setup, all traffic goes through a single Arion Wing, no direct path is allowed. same *netperf* tests are conducted for following setup:
-      * MTU 1500, generic mode
+  - Via Arion Cluster(Node <-> Wing <-> Node): In this setup, all traffic goes through a single Arion Wing, no direct path is allowed. Same *netperf* tests are conducted for following setup:
+    * MTU 1500, generic mode
 	  * MTU 1500, generic mode, offband oam notification on
 	  * MTU 1500, driver mode
 	  * MTU 9000, generic mode
 
 ## Summary of the Results
 
-While the results are still prelimilary, the tests are done with in house (*humble*) 10G network invironment and Arion DP is work in progress with more optimization and features to be add on, we feel initial finding is meaningful and could serve as a baseline for following development. Below are some current observations about Arion DP: 
- - communication via Arion Wing can reach about the same throughput as direct communication between compute nodes with neibhgour rules(close to line rate);
- - there are about *30us* extra network delay to go through Arion Wing(CN-Arion-CN) in netperf TCP_RR test compared with direct CN-CN path;
+Although the results are still prelimilary, the tests are done with in house (*humble*) 10G network environment and Arion DP is work in progress with more optimization and features to be added on, we feel initial finding is meaningful and could serve as a baseline for further development. Below are some current observations about Arion DP: 
+ - communication via Arion Wing can reach about the same throughput as direct communication between compute nodes with neighbour rules(close to line rate);
+ - there are about *30us* network delay to go through Arion Wing(CN-Arion-CN) in netperf TCP_RR test compared with direct CN-CN path;
  - enabling XDP Driver mode has about *7%* performance improvement(both throughput and latency);
  - enabling offband Direct Path OAM capability in Arion DP has about *15%* performance downgrade in terms of throughput;
  - XDP/eBPF program needs to be carefully written with performance concern in mind, the existing Arion DP performance has more than *doubled* compared to the initial version.
@@ -53,7 +53,7 @@ While the results are still prelimilary, the tests are done with in house (*humb
 
 ## The Throughput Benchmark 
 
-Netperf TCP throughput metric measuring the maximum data transfer rate between containers running on different nodes, which is the *netperf*'s default test. 
+Netperf TCP throughput metric measures the maximum data transfer rate between containers running on different nodes, which is the *netperf*'s default test. 
 
 ![tcp_stream](https://user-images.githubusercontent.com/83482178/176801547-793c3f38-e079-415b-9f17-cee79b94538c.png)
 
