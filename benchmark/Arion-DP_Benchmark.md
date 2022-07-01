@@ -15,7 +15,7 @@ The Ariond DP cluster is set up with:
  - 12 bare-matal machines as Computer Nodes
 	
 Each Arion Wing in Arion cluster runs with Ubuntu 22.04. Computer Nodes run with Ubuntu 18.04.
-All nodes are with Intel(R) Xeon(R) CPU E5-2640 and with 10Gbps Fiber Nics.
+
   - CPU
     * Intel(R) Xeon(R) CPU E5-2640  0 @ 2.50GHz 12 cores/24 threads  (Wing)
     * Intel(R) Xeon(R) CPU E5-2620 v4 @ 2.10GHz 16 cores/32 threads(Compute Node)
