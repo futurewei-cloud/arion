@@ -11,16 +11,16 @@ The main comparision in benchmarking is between direct compute node communicatio
 ## Test environment
 
 The Ariond DP cluster is set up with: 
- - 6 bare-metal machines as Arion Wings;
- - 12 bare-matal machines as Computer Nodes.
+ - 6 bare-metal machines as Arion Wings
+ - 12 bare-matal machines as Computer Nodes
 	
 Each Arion Wing in Arion cluster runs with Ubuntu 22.04. Computer Nodes run with Ubuntu 18.04.
 All nodes are with Intel(R) Xeon(R) CPU E5-2640 and with 10Gbps Fiber Nics.
-  - CPU: 
+  - CPU
     * Intel(R) Xeon(R) CPU E5-2640  0 @ 2.50GHz 12 cores/24 threads  (Wing)
     * Intel(R) Xeon(R) CPU E5-2620 v4 @ 2.10GHz 16 cores/32 threads(Compute Node)
   - Network Card: Intel 82599ES 10-Gigabit SFI/SFP+ 
-  - Kernel: 
+  - Kernel 
     * Linux 5.15(Ubuntu 22.04 LTS) (Wing)
     * Linux 4.15(Ubuntu 18.04 LTS) (Compute Node)
 
@@ -30,14 +30,14 @@ These machines are connected via 10G switches.
 
 The tests shown here includes:
   - Direct(Node <-> Node): In this setup, no Arion Cluster is envolved. The benchnark is performed by directly running *netperf* between docker containers in different bare metal machines with differnt MTUs:
-      * MTU 1500;
-	  * MTU 9000.
+      * MTU 1500
+	  * MTU 9000
 
   - Via Arion Cluster(Node <-> Wing <-> Node): In this setup, all traffic goes through a single Arion Wing, no direct path is allowed. same *netperf* tests are conducted for following setup:
-      * MTU 1500, generic mode;
-	  * MTU 1500, generic mode, offband oam notification on;
-	  * MTU 1500, driver mode;
-	  * MTU 9000, generic mode.
+      * MTU 1500, generic mode
+	  * MTU 1500, generic mode, offband oam notification on
+	  * MTU 1500, driver mode
+	  * MTU 9000, generic mode
 
 ## Summary of the Results
 
