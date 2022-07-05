@@ -109,6 +109,13 @@ Watch test:
 		}
 
 ## Arion master performance
+Performance is not relate to VPC size. 100 neighbors and 100,000 neighbors in one VPC have same performance. 
+
+
+Unary query compare to streaming query:
+
+![image](https://user-images.githubusercontent.com/85367145/176919485-efba4c8d-4d02-4287-bdcd-0a32dfcf089f.png)
+
 Read performance:
 
 	GRPC unary performance:
@@ -180,8 +187,7 @@ Read performance:
 		
 		Status code distribution:
 		  [OK]   100 responses
-
-		
+	
 Write performance:
 	
 	GRPC unary performance:
@@ -223,11 +229,11 @@ Watch performance:
     
     Directly watch Hazelcast
     
-		Hazelcast 100k neighbor data performance: 500 ms
+		Hazelcast 100k(6M) neighbor data performance: 500 ms
     
     Watch Arion master
     
-		ArionMaster 100k neighbor data performance: 1.2 s 
+		ArionMaster 100k(6M) neighbor data performance: 1.2 s 
 
 
 
