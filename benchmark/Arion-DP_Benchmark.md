@@ -1,10 +1,10 @@
 # Arion DP Benchmark
-
+06/30/2022
 ## Introduction
 
-This is the initial benchmark for Arion DP network performance. We mainly conducts the Throughput and Latency Benchmark and primarily focus on tests on single Wing performance. The numbers will be used for understanding current Arion DP behaviour and furthuer exploring performance improvement for single wing as well as Ariond DP cluster.
+This is the initial benchmark for Arion DP network performance. We mainly conducted the Throughput and Latency Benchmark and primarily focus on tests on single Wing performance. The numbers will be used for understanding current Arion DP behaviour and furthuer exploring performance improvement for single wing as well as Ariond DP cluster.
 
-We used different tools to conduct various benchmark tests. The results shown below are mainly collected with netperf although we also used iperf3 for comparision. The throughput benchmark uses netperf's TCP_STREAM test. TCP_RR and TCP_CRR are used to observe network latency.
+We used different tools to conduct various benchmark tests. The results shown below are mainly collected with netperf tests, although we also used iperf3 for comparision. The throughput benchmark uses netperf's TCP_STREAM test. TCP_RR and TCP_CRR are used to observe network latency.
 
 The main comparision in benchmarking is between direct compute node communication vs communication via Arion Cluster between computer nodes.
 
@@ -12,9 +12,9 @@ The main comparision in benchmarking is between direct compute node communicatio
 
 The Ariond DP cluster is set up with: 
  - 6 bare-metal machines as Arion Wings
- - 12 bare-matal machines as Computer Nodes
+ - 12 bare-matal machines as Compute Nodes
 	
-Each Arion Wing in Arion cluster runs with Ubuntu 22.04. Computer Nodes run with Ubuntu 18.04.
+Each Arion Wing in Arion cluster runs with Ubuntu 22.04. Compute Nodes run with Ubuntu 18.04.
 
   - CPU
     * Intel(R) Xeon(R) CPU E5-2640  0 @ 2.50GHz 12 cores/24 threads  (Wing)
@@ -30,13 +30,13 @@ These machines are connected via 10G switches.
 
 The tests shown here includes:
   - Direct(Node <-> Node): In this setup, no Arion Cluster is envolved. The benchmark is performed by directly running *netperf* between docker containers in different bare metal machines with differnt MTUs:
-      * MTU 1500
-	  * MTU 9000
+    * MTU 1500
+    * MTU 9000
 
   - Via Arion Cluster(Node <-> Wing <-> Node): In this setup, all traffic goes through a single Arion Wing, no direct path is allowed. Same *netperf* tests are conducted for following setup:
     * MTU 1500, generic mode
-	  * MTU 1500, generic mode, offband oam notification on
-	  * MTU 1500, driver mode
+    * MTU 1500, generic mode, offband oam notification on
+    * MTU 1500, driver mode
 	  * MTU 9000, generic mode
 
 ## Summary of the Results
@@ -58,7 +58,7 @@ Netperf TCP throughput metric measures the maximum data transfer rate between co
 ![tcp_stream](https://user-images.githubusercontent.com/83482178/176801547-793c3f38-e079-415b-9f17-cee79b94538c.png)
 
 
-The above graph shows the maximum throughput that can be achieved with a single TCP connection. With MTU set as 9000, both Node to Node and via Arion reaches about *9.5* Gbps for 10G Nic interface with across Arion has slight higher throughput(*+2.5%*); With default MTU(1500), via arion and direct reaches about the same throughput; driver mode reach *6.5%* higher throughput while turn on direct path OAM downgrades throughput by *15%*. 
+The above graph shows the maximum throughput that can be achieved with a single TCP connection. With MTU set as 9000, both Node to Node and via Arion reaches about *9.5* Gbps for 10G Nic interface with across Arion has slight higher throughput(*+2.5%*); With default MTU(1500), via arion and direct reaches about the same throughput; driver mode reaches *6.5%* higher throughput while turning on direct path OAM downgrades throughput by *15%*. 
 
 | Config	 | MTU	  | Througphut(Mbps) | Difference(%) |
 | :---       | :---:  | :---:            |          ---: |
