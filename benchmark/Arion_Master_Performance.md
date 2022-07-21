@@ -1,11 +1,16 @@
 # Arion master performance
 ## Overview
 
-This is performance test for Arion master server with Hazelcast as data cache layer. It include read performance test, write performance test and watch performance test. 
-For read performance test, there are two test which are grpc unary read performance and grpc streaming read performance.
+This is performance test for Arion master server with Hazelcast as data cache layer. It includes read performance test, write performance test and watch performance test. 
+
+For read performance test, there are two tests: gRPC unary read performance and gRPC streaming read performance. It includes one Arion master QPS, how many clients one Arion master can support and the performance for these clients. The numbers help to better understand how many clients one Arion master can support with a certain latency.
+
+For watch performance, watch is a stream query based on some conditions. Data recorder will send from Arion master to Arion client (Arion Wing) if the condition is ture. This test includes watch performance to download 100,000 (about 6M) routing rules.
+
+For Write performance, it performs on inserting 100,000 routing rule and the latency to insert these data.
 
 ## Test environment
-This test on AWS ec2 instances. It include three instances:
+The tests are performed on AWS. There are 3 test ec2 instances:
 
 	1 Arion master server
 	2 Hazelcast database
@@ -13,8 +18,9 @@ This test on AWS ec2 instances. It include three instances:
 	
 Instance type:
 
-          96 vCPU
-          192 RAM
+	Number of vCPUs: 96
+	Storage device: EBS
+	RAM size: 192
 
 ## Test setup and workflow
 ![image](https://user-images.githubusercontent.com/85367145/176714897-666c440d-7eb8-478f-add8-65621ecf7729.png)
@@ -109,8 +115,20 @@ Watch test:
 		}
 
 ## Arion master performance
-Performance is not relate to VPC size. 100 neighbors and 100,000 neighbors in one VPC have same performance. 
+### Test based on VPC and Neighbor rules
 
+
+Table:
+
+![image](https://user-images.githubusercontent.com/85367145/180293946-614b67a1-463a-47dd-9e65-1918384e52cf.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180293767-194a8ec7-8386-4cb0-bac4-781bd3e83eb4.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180296041-e56a33c5-c854-41c3-b6eb-aea3981f20be.png)
+
+From the table, we can see that QPS and latency almost stay the same no matter how the number of VPC's/subnets changes. Thus, the conclusion is the number of VPC's/subnets is unrelated to performance.
 
 Unary query compare to streaming query:
 
