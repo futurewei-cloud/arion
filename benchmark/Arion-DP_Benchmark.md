@@ -78,9 +78,9 @@ The above graph shows the maximum throughput that can be achieved with a single 
 | Config	 | MTU	  | Througphut(Mbps) | Difference(%) |
 | :---       | :---:  | :---:            |          ---: |
 | zeta    	 |	1500  |	3073.6          | 	  61.1%      |
+| DP OAM on  |	1500  |	4275.28 		   |    85.0%      |
 | via arion	 |	1500  |	4995.24          | 	  99.3%      |
 | drv mode	 |	1500  |	5358.07 	     |	  106.5%     |
-| DP OAM on  |	1500  |	4275.28 		 |    85.0%      |
 | direct	 |  1500  |	5031.76 		 |    100%       |
 |        |   |             |           |
 | via arion  |	9000  |	9664.98 		 |    102.5%     |
