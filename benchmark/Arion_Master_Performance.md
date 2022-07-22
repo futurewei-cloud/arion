@@ -162,6 +162,23 @@ Charts
 
 The charts above show us that, QPS improves when the number of clients grows. It reaches the optimal value when the number of clients is around 30. After that QPS almost stops growing. However, lentency keeps increasing while the number of clients grows. It exeeds 1.0 ms when there are 300 clients and increases dramatically as more clients are added. Thus, if we want to keep latency below 1.0ms, the number of clients should not exeed 300. 
 
+### 1000 clients with RPS
+
+More RPS increase test latency since request are queued.
+
+Table
+
+![image](https://user-images.githubusercontent.com/85367145/180480405-5fba45df-898d-4151-8709-39c1e995732e.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180480274-2ae3ea01-5bdd-4810-a16d-e147067d2c6a.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180480309-f0d5be02-14a5-4f07-bb11-710557dbb225.png)
+
+From the table and charts above, we can see that QPS grows as RPS increases. It reaches its maximum value and becomes stable after RPS gets to 40,000. Latency also grows slowly at the beginning. However, after RPS reaches the peak, latency starts to grow dramatically.
+
+In a cluster, think about if clients number is 10,000 and every client's RPS is 30, so the total number of one cluster RPS is 300,000 requests. 10 Arion master server can provide more than 300,000 QPS, and every Arion master server provide 30,000 RPS. Every request latency number is about 0.6ms. So Arion master server can used to provide on-demand service for compute node if every compute node RPS less than 30 RPS.
 
 ### Unary query compare to streaming query
 
@@ -185,24 +202,6 @@ From table and charts above, streaming query performance is much better than una
 30 clients have a better performance as RPS reach it's QPS with low latency. Every clients can send about 150 requests.
 
 ![image](https://user-images.githubusercontent.com/85367145/180331124-08c18428-1b66-4045-9577-94e45a655d50.png)
-
-### 1000 clients with RPS
-
-More RPS increase test latency since request are queued.
-
-Table
-
-![image](https://user-images.githubusercontent.com/85367145/180480405-5fba45df-898d-4151-8709-39c1e995732e.png)
-
-Charts
-
-![image](https://user-images.githubusercontent.com/85367145/180480274-2ae3ea01-5bdd-4810-a16d-e147067d2c6a.png)
-
-![image](https://user-images.githubusercontent.com/85367145/180480309-f0d5be02-14a5-4f07-bb11-710557dbb225.png)
-
-From the table and charts above, we can see that QPS grows as RPS increases. It reaches its maximum value and becomes stable after RPS gets to 40,000. Latency also grows slowly at the beginning. However, after RPS reaches the peak, latency starts to grow dramatically.
-
-In a cluster, think about if clients number is 10,000 and every client's RPS is 30, so the total number of one cluster RPS is 300,000 requests. 10 Arion master server can provide more than 300,000 QPS, and every Arion master server provide 30,000 RPS. Every request latency number is about 0.6ms. So Arion master server can used to provide on-demand service for compute node if every compute node RPS less than 30 RPS.
 
 ### Write performance:
 	
