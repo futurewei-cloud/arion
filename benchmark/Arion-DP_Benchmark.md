@@ -53,9 +53,9 @@ The tests are done with in house (*humble*) 10G network environment. Although Ar
  - Network delay to go through Arion Wing(CN-Arion-CN) in netperf TCP_RR test compared with direct CN-CN path can be as low as *21us*(XDP driver mode);
  - enabling XDP Driver mode has about *7%* performance improvement(both throughput and latency);
  - enabling offband Direct Path OAM capability in Arion DP has about *15%* performance downgrade in terms of throughput;
- - Arion DP can reach about *9.6Gbps* in 10G environment, legacy zeta cluster can only reach about 3.xGbps, this is 3X difference. We can break down the causes as following:
+ - Arion DP can reach about *9.6Gbps* in 10G environment, legacy zeta cluster can only reach about 3.0Gbps, this is 3X difference. We can break down the causes as following:
     * XDP/eBPF is an active evolving technology, while legacy zeta uses libbpf v0.3(01/03/2021), Arion DP uses libbpf v0.8 (5/16/2022). Optimizations, bug fixes and new capabilities are added in recent year;
-    * legacy zata reaches about 3.0Gbps in our benchmarking tests, we can only use default MTU 1500, changing MTU causes the system not functional(Compute nodes can't ping each other via Zeta after trying MTU change), zeta is not robust as we experinced inconsistent behaviour from time to time, both in terms of functionality and performance;
+    * legacy Zata reaches about 3.0Gbps in our benchmarking tests, we can only use default MTU 1500, changing MTU causes the system not functional(Compute nodes can't ping each other via Zeta after trying MTU change), current Zeta is not robust as we experinced inconsistent behaviour from time to time, both in terms of functionality and performance;
     * For comparision purpose, we tried Arion DP with literally all zeta functionalities added, the throughput can reach to about 4.0Gbps(MTU 1500), this is 33% difference, newer libbpf as well as Linux kernel optimization are the main reasons for the performance increase;
     * Arion DP reaches about 5.0Gbps(MTU 1500), which is another 33% increase in throughput; this is caused by removing unnecessary functionalities and other minor optimizations;
     * Arion DP with driver mode reaches 5.3x Gbps(MTU 1500), a 7% increase;
@@ -77,13 +77,13 @@ The above graph shows the maximum throughput that can be achieved with a single 
 
 | Config	 | MTU	  | Througphut(Mbps) | Difference(%) |
 | :---       | :---:  | :---:            |          ---: |
-| zeta    	 |	1500  |	3073.6          | 	  61.1%      |
+| Zeta    	 |	1500  |	3073.6          | 	  61.1%      |
 | DP OAM on  |	1500  |	4275.28 		   |    85.0%      |
-| via arion	 |	1500  |	4995.24          | 	  99.3%      |
+| via Arion	 |	1500  |	4995.24          | 	  99.3%      |
 | drv mode	 |	1500  |	5358.07 	     |	  106.5%     |
 | direct	 |  1500  |	5031.76 		 |    100%       |
 |        |   |             |           |
-| via arion  |	9000  |	9664.98 		 |    102.5%     |
+| via Arion  |	9000  |	9664.98 		 |    102.5%     |
 | direct	 |  9000  |	9426.22 		 |    100%       |
 
 The tests are measured by running *netperf* using the *TCP_STREAM* test. Since the test is mostly done using a single core for network processing(as also observed during the test), for default mtu 1500 tests, above number is constrained by the available CPU resources of a single core(CPU is the bottleneck). An interesting observation is XDP/eBPF driver mode has noticable better throughput than direct connect. This can be further studied.
