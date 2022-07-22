@@ -59,7 +59,7 @@ The tests are done with in house (*humble*) 10G network environment. Although Ar
     * For comparision purpose, we tried Arion DP with literally all zeta functionalities added, the throughput can reach to about 4.0Gbps(MTU 1500), this is 33% difference, newer libbpf as well as Linux kernel optimization are the main reasons for the performance increase;
     * Arion DP reaches about 5.0Gbps(MTU 1500), which is another 33% increase in throughput; this is caused by removing unnecessary functionalities and other minor optimizations;
     * Arion DP with driver mode reaches 5.3x Gbps(MTU 1500), a 7% increase;
-    * Purely for benchmarking purpose, Arion DP can set MTU to 9000, this boosts the throughput to 9.6Gbps.
+    * For benchmarking purpose, we can set MTU to 9000 in Arion DP cluster, this boosts the throughput to 9.6Gbps.
 
  - XDP/eBPF program needs to be carefully written with performance concern in mind, we've seen obvious performance difference in above analysize, as the scenerios Arion DP to face becomes more complex, how careful XDP/eBPF is written matters.  
 
