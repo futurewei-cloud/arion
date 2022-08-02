@@ -62,4 +62,5 @@ E2E programming (watch + programming) latency:
     - per neighbor latency 5.89us
 
 ![image](https://user-images.githubusercontent.com/83976250/182432696-09073c68-97fa-4829-a6b9-ad20f1763a35.png)
+
 As we can see, over the increasing goal-state sizes (in one version of update) the latency for each state was lowered, due to the saved/shared gRPC communication overhead across all goal-states. 
