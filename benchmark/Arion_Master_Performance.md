@@ -1,11 +1,16 @@
 # Arion master performance
 ## Overview
 
-This is performance test for Arion master server with Hazelcast as data cache layer. It include read performance test, write performance test and watch performance test. 
-For read performance test, there are two test which are grpc unary read performance and grpc streaming read performance.
+This is performance test for Arion master server with Hazelcast as data cache layer. It includes read performance test, write performance test and watch performance test. 
+
+For read performance test, there are two tests: gRPC unary read performance and gRPC streaming read performance. It includes one Arion master QPS, how many clients one Arion master can support and the performance for these clients. The numbers help to better understand how many clients one Arion master can support with a certain latency.
+
+For watch performance, watch is a stream query based on some conditions. Data recorder will send from Arion master to Arion client (Arion Wing) if the condition is ture. This test includes watch performance to download 100,000 (about 6M) routing rules.
+
+For Write performance, it performs on inserting 100,000 routing rule and the latency to insert these data.
 
 ## Test environment
-This test on AWS ec2 instances. It include three instances:
+The tests are performed on AWS. There are 3 test ec2 instances:
 
 	1 Arion master server
 	2 Hazelcast database
@@ -13,8 +18,9 @@ This test on AWS ec2 instances. It include three instances:
 	
 Instance type:
 
-          96 vCPU
-          192 RAM
+	Number of vCPUs: 96
+	Storage device: EBS
+	RAM size: 192
 
 ## Test setup and workflow
 ![image](https://user-images.githubusercontent.com/85367145/176714897-666c440d-7eb8-478f-add8-65621ecf7729.png)
@@ -109,123 +115,99 @@ Watch test:
 		}
 
 ## Arion master performance
-Performance is not relate to VPC size. 100 neighbors and 100,000 neighbors in one VPC have same performance. 
+### Test based on VPC and Neighbor rules
 
 
-Unary query compare to streaming query:
+Table
+
+![image](https://user-images.githubusercontent.com/85367145/180321277-9ebbc808-5ea9-4015-847d-35c454ab53f0.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180293767-194a8ec7-8386-4cb0-bac4-781bd3e83eb4.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180296041-e56a33c5-c854-41c3-b6eb-aea3981f20be.png)
+
+From the table, we can see that QPS and latency almost stay the same no matter how the number of VPC's/subnets changes. Thus, the conclusion is the number of VPC's/subnets is unrelated to performance.
+
+### Arion master QPS test
+
+In this test, it performs step by step load from RPS = 10,000 to RPS = 60,000 in order to get Arion master QPS.
+
+Table
+
+![image](https://user-images.githubusercontent.com/85367145/180319407-5c4dcace-502d-42b4-934f-862c1719de22.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180326004-578c7713-22e4-4bb4-9091-ed9229ae827b.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180322684-69b238d5-f5dd-4426-ab77-720102382988.png)
+
+From the charts above, we can see that QPS grows as RPS increases. It reaches its peak when RPS is about 40,000. QPS remains stable with a slight drop as RPS continues to increase. The reason for the minor QPS drop is that the requests queued on server consume some resources. Average latency also grows as RPS increases.
+
+### Arion master clients number supporting test
+
+This is a test for how many clients Arion master server can support and their coresponding performance.
+
+Table
+
+![image](https://user-images.githubusercontent.com/85367145/180326483-12891187-44d0-4def-9c12-aef3e7a0632f.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180326808-d9a3088f-2532-4959-ba5c-986d5cf2a548.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180326850-bb826699-c41e-46d9-985e-423bbff9eabe.png)
+
+The charts above show us that, QPS improves when the number of clients grows. It reaches the optimal value when the number of clients is around 30. After that QPS almost stops growing. However, lentency keeps increasing while the number of clients grows. It exeeds 1.0 ms when there are 300 clients and increases dramatically as more clients are added. Thus, if we want to keep latency below 1.0ms, the number of clients should not exeed 300. 
+
+### 1000 clients with RPS
+
+More RPS increase test latency since request are queued.
+
+Table
+
+![image](https://user-images.githubusercontent.com/85367145/180480405-5fba45df-898d-4151-8709-39c1e995732e.png)
+
+Charts
+
+![image](https://user-images.githubusercontent.com/85367145/180480274-2ae3ea01-5bdd-4810-a16d-e147067d2c6a.png)
+
+![image](https://user-images.githubusercontent.com/85367145/180480309-f0d5be02-14a5-4f07-bb11-710557dbb225.png)
+
+From the table and charts above, we can see that QPS grows as RPS increases. It reaches its maximum value and becomes stable after RPS gets to 40,000. Latency also grows slowly at the beginning. However, after RPS reaches the peak, latency starts to grow dramatically.
+
+In a cluster, think about if clients number is 10,000 and every client's RPS is 30, so the total number of one cluster RPS is 300,000 requests. 10 Arion master server can provide more than 300,000 QPS, and every Arion master server provide 30,000 RPS. Every request latency number is about 0.6ms. So Arion master server can used to provide on-demand service for compute node if every compute node RPS less than 30 RPS.
+
+### Unary query compare to streaming query
+
+This is a test for comparison Unary query performance with streaming query performance.
+
+Table
 
 ![image](https://user-images.githubusercontent.com/85367145/176919485-efba4c8d-4d02-4287-bdcd-0a32dfcf089f.png)
 
-Read performance:
+Charts
 
-	GRPC unary performance:
-	
-		Summary:
-		  Count:        1000000
-		  Total:        24.98 s
-		  Slowest:      11.11 ms
-		  Fastest:      0.15 ms
-		  Average:      0.30 ms
-		  Requests/sec: 40036.06
-		
-		Response time histogram:
-		  0.155  [1]      |
-		  1.250  [992949] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  2.346  [5063]   |
-		  3.441  [1102]   |
-		  4.537  [376]    |
-		  5.632  [176]    |
-		  6.728  [114]    |
-		  7.824  [112]    |
-		  8.919  [67]     |
-		  10.015 [34]     |
-		  11.110 [6]      |
-		
-		Latency distribution:
-		  10 % in 0.20 ms
-		  25 % in 0.22 ms
-		  50 % in 0.25 ms
-		  75 % in 0.31 ms
-		  90 % in 0.39 ms
-		  95 % in 0.53 ms
-		  99 % in 1.11 ms
-		
-		Status code distribution:
-		  [OK]   1000000 responses
-	
-	GRPC streaming performance:
-		
-    	Summary:
-		  Count:        100
-		  Total:        189.03 ms
-		  Slowest:      83.86 ms
-		  Fastest:      31.48 ms
-		  Average:      51.29 ms
-		  Requests/sec: 529.02
-		
-		Response time histogram:
-		  31.483 [1]  |∎∎
-		  36.721 [8]  |∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  41.958 [16] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  47.196 [15] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  52.434 [24] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  57.671 [13] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  62.909 [7]  |∎∎∎∎∎∎∎∎∎∎∎∎
-		  68.146 [5]  |∎∎∎∎∎∎∎∎
-		  73.384 [2]  |∎∎∎
-		  78.621 [4]  |∎∎∎∎∎∎∎
-		  83.859 [5]  |∎∎∎∎∎∎∎∎
-		
-		Latency distribution:
-		  10 % in 36.88 ms
-		  25 % in 41.90 ms
-		  50 % in 49.20 ms
-		  75 % in 56.54 ms
-		  90 % in 68.42 ms
-		  95 % in 78.38 ms
-		  99 % in 82.37 ms
-		
-		Status code distribution:
-		  [OK]   100 responses
-	
-Write performance:
-	
-	GRPC unary performance:
-    
-		Summary:
-		  Count:        1000000
-		  Total:        27.86 s
-		  Slowest:      9.02 ms
-		  Fastest:      0.51 ms
-		  Average:      1.01 ms
-		  Requests/sec: 35895.52
-		
-		Response time histogram:
-		  0.515 [1]      |
-		  1.365 [912706] |∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎∎
-		  2.215 [77669]  |∎∎∎
-		  3.065 [7610]   |
-		  3.915 [1692]   |
-		  4.765 [245]    |
-		  5.615 [47]     |
-		  6.465 [21]     |
-		  7.315 [3]      |
-		  8.165 [2]      |
-		  9.016 [4]      |
-		
-		Latency distribution:
-		  10 % in 0.75 ms
-		  25 % in 0.83 ms
-		  50 % in 0.93 ms
-		  75 % in 1.09 ms
-		  90 % in 1.32 ms
-		  95 % in 1.57 ms
-		  99 % in 2.20 ms
-		
-		Status code distribution:
-		  [OK]   1000000 responses
+![image](https://user-images.githubusercontent.com/85367145/180327864-b8f40d36-195f-43ff-ad98-fbf7651bdaa0.png)
 
-Watch performance:
+![image](https://user-images.githubusercontent.com/85367145/180327874-eae79dcb-567c-4161-b970-fd2662572032.png)
+
+From table and charts above, streaming query performance is much better than unary query. Streaming query need client handle requests.
+
+
+### 30 clients performance
+
+30 clients have a better performance as RPS reach it's QPS with low latency. Every clients can send about 150 requests.
+
+![image](https://user-images.githubusercontent.com/85367145/180331124-08c18428-1b66-4045-9577-94e45a655d50.png)
+
+### Write performance:
+	
+![image](https://user-images.githubusercontent.com/85367145/180335655-f81b194a-2e7d-4d49-a0c6-148d53c4cb29.png)	
+
+### Watch performance:
     
     Directly watch Hazelcast
     
