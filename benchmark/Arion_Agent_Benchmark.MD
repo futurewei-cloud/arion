@@ -13,20 +13,21 @@ This test is between 2 machines of the same lab, they don't belong to the same I
     2. Arion agent (launched on the same machine of Arion Wing which is XDP as gateway network functionality)
 
 
-## Test workflow and scenario #1 - watch from Arion Master only latency (ArionAgent as c++ grpc client)
 
-Latency = ArionAgent finishes receiving N number of neighbors - start to receive Grpc neighbors time (right after watch call to ArionMaster Grpc server finished)
+## Arion CP performance test scenario #1 - Get/List from server to gateway programming E2E latency
 
-Watch performance from ArionMaster:
-* Watch 5 neighbors performance: 31 us
-* Watch 100k neighbors performance: 379,270 us = ~380 ms
+* Arion Master - For 100 gateway nodes cluster
+    - Single-digit us watch latency per state
+    - Average 0.3 ms remotely get latency per neighbor
+    - Average 1 ms write latency per neighbor
 
+* Arion Agent List/Get data latency (data were already in DB)
+    - Start time – when ArionWing calls server for getting/listing neighbor updates (from scratch, or from a specific revision)
+    - End time – when ArionWing gets and finish all neighbors programming in ebpf
+    - Less than 20us E2E latency (watch + eBPF programming) per state for small sized configuration (1 < state size < 100)
+    - Less than 10us E2E latency per state for medium to large sized configuration (100 < state size < 1 million)
 
-## Test workflow and scenario #2 - E2E ebpf programming latency
-
-Latency = Finish ebpf map programming time - start to receive Grpc neighbors time (right after watch call to ArionMaster Grpc server finished)
-
-E2E programming (watch + programming) latency:
+E2E programming (list batch data + programming) latency:
 * 1 neighbor
     - overall latency 15us
     - per neighbor latency 15us
@@ -61,7 +62,36 @@ E2E programming (watch + programming) latency:
     - overall latency 5,893 ms = 5.9 seconds
     - per neighbor latency 5.89us
 
-
-![image](https://user-images.githubusercontent.com/83976250/182432696-09073c68-97fa-4829-a6b9-ad20f1763a35.png)
+![image](https://user-images.githubusercontent.com/83976250/194677460-1dbf2788-19ff-4952-8406-62743ac73373.png)
 
 As we can see, over the increasing goal-state sizes (in one version of update) the latency for each state was lowered, due to the saved/shared gRPC communication overhead across all goal-states. 
+
+
+## Arion CP performance test scenario #2 - User update neighbors to server to gateway programming E2E latency
+
+* Arion Agent Watch Latency (user simultaneously updates neighbors to server/DB)
+    - Start time – when the 1st neighbor insert/update (to server aka. ArionMaster) is called by user
+    - End time – when the Nth neighbor (last in this update) is programmed in Arion Wing ebpf, means all neighbors are programmed on gateway node
+    - Average 1 ms write latency per neighbor
+
+E2E programming (write to server db + watch + programming) latency:
+* 5 neighbors
+    - overall 0.9ms
+    - per neighbor latency 180us
+* 100 neighbors
+    - overall 15ms
+    - per neighbor latency 150us
+* 1k neighbors
+    - overall 60ms
+    - per neighbor latency 60us
+* 10k neighbors
+    - overall 748ms
+    - per neighbor latency 74.8us
+* 100k neighbors
+    - overall 3.8s
+    - per neighbor latency 38us
+* 1 million neighbors
+    - overall 0.9ms
+    - per neighbor latency 39us
+
+![image](https://user-images.githubusercontent.com/83976250/194678279-ec874f26-63fc-45c9-b12c-1d223c0283fa.png)
